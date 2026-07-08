@@ -1,7 +1,5 @@
 # Vue Dynamic List of Posts
 
-- LIVE DEMO: https://VictorKomara.github.io/vue_dynamic-list-of-posts/
-
 Implement the App with ability to show posts of a current logged-in user.
 The user should be able to create a new post with their userId. Each post can
 be opened in the sidebar with its comments, can be edited and deleted. There should delete a comment and a
