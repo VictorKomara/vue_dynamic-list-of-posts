@@ -62,18 +62,26 @@ watch(
 );
 
 const handlePostDelete = async (postToDelete) => {
+  const previousPosts = [...posts.value];
+  const previousSelectedPost = selectedPost.value;
+  const previousSidebarOpen = sidebarOpen.value;
+
+  errorMessage.value = "";
+
+  posts.value = posts.value.filter((post) => post.id !== postToDelete.id);
+  
+  if (selectedPost.value?.id === postToDelete.id) {
+    selectedPost.value = { id: -1 };
+    sidebarOpen.value = false;
+  }
+
   try {
-    errorMessage.value = "";
-
     await postApi.deletePost(postToDelete.id);
-    posts.value = posts.value.filter((post) => post.id !== postToDelete.id);
-
-    if (selectedPost.value?.id === postToDelete.id) {
-      selectedPost.value = { id: -1 };
-      sidebarOpen.value = false;
-    }
   } catch (error) {
     console.error("Unable to delete a todo");
+    posts.value = previousPosts;
+    selectedPost.value = previousSelectedPost;
+    sidebarOpen.value = previousSidebarOpen;
     errorMessage.value = "Unable to delete post. Please try again.";
   }
 };

@@ -46,13 +46,17 @@ const hasComments = computed(() => {
 });
 
 const deleteComment = async (commentId) => {
+  const previousComments = [...comments.value];
+
+  comments.value = comments.value.filter(
+    (comment) => comment.id !== commentId,
+  );
+
   try {
     await commentApi.deleteComment(commentId);
-    comments.value = comments.value.filter(
-      (comment) => comment.id !== commentId,
-    );
   } catch (error) {
     console.error("Could not delete comment:", error);
+    comments.value = previousComments;
     deleteCommentsError.value = "Could not delete comment. Please try again later.";
   }
 };
@@ -113,7 +117,7 @@ const handleCommentAdd = (newComment) => {
         <template v-else-if="hasComments" >
           <CommentsList          
             :comments="comments"
-            @delete-comment="deleteComment"
+            @deleteComment="deleteComment"
           />
   
           <div v-if="deleteCommentsError" class="notification is-danger is-light mb-4">

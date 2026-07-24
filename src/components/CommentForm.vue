@@ -4,7 +4,6 @@ import InputField from "./InputField.vue";
 import TextAreaField from "./TextAreaField.vue";
 import * as commentApi from "../api/comments";
 import { isValidEmail } from "../utils/validators.js";
-import Loader from "./Loader.vue";
 
 const props = defineProps({
   postId: Number,
@@ -80,14 +79,24 @@ const handleSubmit = async () => {
       body: body.value,
     });
 
+    body.value = "";
+
     emit("commentAdded", newComment);
     emit("setWriteComment", false);
   } catch (err) {
-    console.error(err);
-    commentError.value = 'Unable to create a comment';
+    commentError.value = "Unable to create a comment";
   } finally {
     isLoading.value = false;
   }
+};
+
+const resetForm = () => {
+  name.value = "";
+  email.value = "";
+  body.value = "";
+
+  errors.value = { name: "", email: "", body: "" };
+  commentError.value = "";
 };
 </script>
 
@@ -117,11 +126,15 @@ const handleSubmit = async () => {
         :error="errors.body"
       />
 
-      <Loader v-if="isLoading" />
-
-      <div v-else class="field is-grouped">
+      <div class="field is-grouped">
         <div class="control">
-          <button type="submit" class="button is-link">Add Comment</button>
+          <button
+            type="submit"
+            class="button is-link"
+            :class="{ 'is-loading': isLoading }"
+          >
+            Add Comment
+          </button>
         </div>
         <div class="control">
           <button
@@ -130,6 +143,15 @@ const handleSubmit = async () => {
             @click="emit('setWriteComment', false)"
           >
             Cancel
+          </button>
+        </div>
+        <div class="control">
+          <button
+            type="reset"
+            class="button is-link is-light"
+            @click="resetForm"
+          >
+            Reset
           </button>
         </div>
       </div>

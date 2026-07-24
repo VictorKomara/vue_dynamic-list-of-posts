@@ -2,7 +2,6 @@
 import { ref, watch } from "vue";
 import InputField from "./InputField.vue";
 import TextAreaField from "./TextAreaField.vue";
-import Loader from "./Loader.vue";
 import * as postApi from "../api/posts";
 
 const props = defineProps({
@@ -46,8 +45,6 @@ const validate = () => {
 const handleSubmit = async () => {
   if (!validate()) return;
 
-  console.log('props.post', props.post.id);
-
   try {
     isLoading.value = true;
     postError.value = "";
@@ -55,13 +52,13 @@ const handleSubmit = async () => {
     const updatePost = await postApi.updatePost(props.post.id, {
       title: title.value,
       userId: props.user.id,
+      body: body.value,
     });
 
     emit("postUpdated", updatePost);
-    emit('setEditPost', false);
+    emit("setEditPost", false);
   } catch (err) {
     postError.value = "Unable to update a post";
-    console.log(err);
   } finally {
     isLoading.value = false;
   }
@@ -89,22 +86,24 @@ const handleSubmit = async () => {
       />
 
       <div class="field is-grouped">
-        <Loader v-if="isLoading" />
-
-        <template v-else>
-          <div class="control">
-            <button type="submit" class="button is-link">Save</button>
-          </div>
-          <div class="control">
-            <button
-              type="reset"
-              class="button is-link is-light"
-              @click="emit('setEditPost', false)"
-            >
-              Cancel
-            </button>
-          </div>
-        </template>
+        <div class="control">
+          <button
+            type="submit"
+            class="button is-link"
+            :class="{ 'is-loading': isLoading }"
+          >
+            Save
+          </button>
+        </div>
+        <div class="control">
+          <button
+            type="reset"
+            class="button is-link is-light"
+            @click="emit('setEditPost', false)"
+          >
+            Cancel
+          </button>
+        </div>
       </div>
 
       <p v-if="postError" class="help is-danger">

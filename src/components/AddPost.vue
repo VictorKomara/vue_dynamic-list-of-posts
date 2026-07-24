@@ -3,7 +3,6 @@ import { ref, watch } from "vue";
 import InputField from "./InputField.vue";
 import TextAreaField from "./TextAreaField.vue";
 import * as postApi from "../api/posts";
-import Loader from "./Loader.vue";
 
 const props = defineProps({
   user: Object,
@@ -62,7 +61,6 @@ const handleSubmit = async () => {
     emit("postAdded", newPost);
   } catch (err) {
     postError.value = "Unable to create a post";
-    console.log(err);
   } finally {
     isLoading.value = false;
   }
@@ -90,22 +88,24 @@ const handleSubmit = async () => {
       />
 
       <div class="field is-grouped">
-        <Loader v-if="isLoading" />
-
-        <template v-else>
-          <div class="control">
-            <button type="submit" class="button is-link">Create</button>
-          </div>
-          <div class="control">
-            <button
-              type="reset"
-              class="button is-link is-light"
-              @click="emit('closeSidebar', false)"
-            >
-              Cancel
-            </button>
-          </div>
-        </template>
+        <div class="control">
+          <button
+            type="submit"
+            class="button is-link"
+            :class="{ 'is-loading': isLoading }"
+          >
+            Create
+          </button>
+        </div>
+        <div class="control">
+          <button
+            type="reset"
+            class="button is-link is-light"
+            @click="emit('closeSidebar', false)"
+          >
+            Cancel
+          </button>
+        </div>
       </div>
 
       <p v-if="postError" class="help is-danger">

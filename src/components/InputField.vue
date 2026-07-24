@@ -26,7 +26,7 @@ const model = defineModel();
       />
 
       <span v-if="icon"  class="icon is-small is-left">
-        <i :class="`fas fa-user fa-${icon}`"></i>
+        <i :class="`fas fa-${icon}`"></i>
       </span>
       
       <span v-if="error"
